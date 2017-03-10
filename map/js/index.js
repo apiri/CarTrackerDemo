@@ -45,7 +45,7 @@ d3.xml('marker.svg', "image/svg+xml", function(xml) {
     refY: 40,
     markerWidth: 25,
     markerHeight: 50,
-    orient: '90 deg',
+    orient: '270',
     markerUnits: 'userSpaceOnUse'
   }).node().appendChild(importedNode);
 });
@@ -122,23 +122,23 @@ var graph = g.append("g")
     width: graphWidth + 20,
     height: graphHeight * 3 + 20
   });
-var graphs = ['wifi', 'lte'].map(function(v, i) {
-  var gc = graph.append('g')
-    .attr("width", graphWidth)
-    .attr("height", (i + 1) * graphHeight)
-    .attr("transform", "translate(10," + (i * graphHeight + 10) + ")");
-  gc.append('rect')
-    .attr('class', 'plot')
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('width', graphWidth)
-    .attr('height', graphHeight);
-  gc.append("text").text(v).attr('class', 'label');
-  return gc.append('path')
-    .attr("class", "graph " + v)
-    .attr("clip-path", "url(#clip)")
-    .datum(data.rates[v]);
-});
+// var graphs = ['wifi', 'lte'].map(function(v, i) {
+//   var gc = graph.append('g')
+//     .attr("width", graphWidth)
+//     .attr("height", (i + 1) * graphHeight)
+//     .attr("transform", "translate(10," + (i * graphHeight + 10) + ")");
+//   gc.append('rect')
+//     .attr('class', 'plot')
+//     .attr('x', 0)
+//     .attr('y', 0)
+//     .attr('width', graphWidth)
+//     .attr('height', graphHeight);
+//   gc.append("text").text(v).attr('class', 'label');
+//   return gc.append('path')
+//     .attr("class", "graph " + v)
+//     .attr("clip-path", "url(#clip)")
+//     .datum(data.rates[v]);
+// });
 
 var duration = 5000;
 
@@ -168,9 +168,9 @@ function update() {
   // update the graph container location
   var point = positionsProjected.last();
   graph.attr("transform", "translate(" + point.x + "," + point.y + ")");
-  graphs.forEach(function(gr) {
-    gr.attr('d', graphFunction);
-  });
+  // graphs.forEach(function(gr) {
+  //   gr.attr('d', graphFunction);
+  // });
 
   // set the domain of the time graph
 }
@@ -185,12 +185,12 @@ var transition = d3.select({}).transition()
     var domain = [now - (graphN - 2) * duration, now - duration];
     x.domain(domain);
     // redraw the line
-    graphs.forEach(function(gr) {
-      gr.attr("d", graphFunction)
-        .attr("transform", null);
-        /* .transition()
-            .attr("transform", "translate(" + x(now() - (n - 2) * duration) + ")");*/
-    });
+    // graphs.forEach(function(gr) {
+    //   gr.attr("d", graphFunction)
+    //     .attr("transform", null);
+    //     /* .transition()
+    //         .attr("transform", "translate(" + x(now() - (n - 2) * duration) + ")");*/
+    // });
   }).transition().each("start", tick);
 })();
 
@@ -243,9 +243,9 @@ function processNetwork(type) {
   };
 }
 
-var eb = new vertx.EventBus('http://ec2-52-33-241-152.us-west-2.compute.amazonaws.com:8050/eventbus/');
+var eb = new vertx.EventBus('http://192.168.0.111:12345/eventbus/');
 eb.onopen = function() {
-  eb.registerHandler("test.123", processEvent);
+  eb.registerHandler("messages", processEvent);
   eb.registerHandler("realtime", processNetwork('lte'));
   eb.registerHandler("wifi", processNetwork('wifi'));
 };
