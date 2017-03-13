@@ -20,6 +20,25 @@ var data = {
   }
 };
 
+// Adapted from: http://stackoverflow.com/a/40870439/231008
+const markerHtmlStyles = `
+  background-color: #FF0000;
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  left: -.5rem;
+  top: -.5rem;
+  position: relative;
+  border-radius: 1rem 1rem 0;
+  transform: rotate(45deg);`
+
+const icon = L.divIcon({
+  iconAnchor: [0, 24],
+  labelAnchor: [-6, 0],
+  popupAnchor: [0, -36],
+  html: `<span style="${markerHtmlStyles}" />`
+})
+
 var map = L.map('map');
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -212,8 +231,7 @@ function processEvent(event) {
         var lon = parseFloat(msg.longitude_degrees);
 
         // Put a waypoint for this stop
-        L.marker([lat, lon]).addTo(map)
-          .bindPopup('Stop event at ' + moment().format('h:mm:ss a'))
+        L.marker([lat, lon], {icon: icon}).addTo(map)
           .openPopup();
         positions.push([lat, lon]);
         var projectedPoint = projectLatLon(lat, lon);
