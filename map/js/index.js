@@ -206,9 +206,15 @@ function processEvent(event) {
     var msg = event;
     switch (msg.type) {
       case "position":
+
         // update the postiion of the car itself and therefore the overlay charts.
         var lat = parseFloat(msg.latitude_degrees);
         var lon = parseFloat(msg.longitude_degrees);
+
+        // Put a waypoint for this stop
+        L.marker([lat, lon]).addTo(map)
+          .bindPopup('Stop event at ' + moment().format('h:mm:ss a'))
+          .openPopup();
         positions.push([lat, lon]);
         var projectedPoint = projectLatLon(lat, lon);
         positionsProjected.push(projectedPoint);
@@ -243,7 +249,7 @@ function processNetwork(type) {
   };
 }
 
-var eb = new vertx.EventBus('http://192.168.0.111:12345/eventbus/');
+var eb = new vertx.EventBus('http://10.200.32.67:12345/eventbus/');
 eb.onopen = function() {
   eb.registerHandler("messages", processEvent);
   eb.registerHandler("realtime", processNetwork('lte'));
