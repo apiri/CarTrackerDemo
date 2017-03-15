@@ -12,7 +12,13 @@
     <title>map</title>
 </head>
 <body>
-    <div id="map"></div>
-    <script src="js/index.js"></script>
+
+  <div id="form">
+    Websocket address: <input type="text" name="ws-address" value="http://192.168.0.111:12345/eventbus/" id="ws-address" size="80"/>
+    <input type="button" onclick="wsConnect()" value="Connect"/>
+  </div>
+  <div id="map"></div>
+  <script src="js/index.js"></script>
+
 </body>
 </html>

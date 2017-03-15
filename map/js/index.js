@@ -267,12 +267,15 @@ function processNetwork(type) {
   };
 }
 
-var eb = new vertx.EventBus('http://10.200.32.67:12345/eventbus/');
-eb.onopen = function() {
-  eb.registerHandler("messages", processEvent);
-  eb.registerHandler("realtime", processNetwork('lte'));
-  eb.registerHandler("wifi", processNetwork('wifi'));
-};
+function wsConnect() {
+  var address = document.getElementById("ws-address").value;
+  var eb = new vertx.EventBus(address);
+  eb.onopen = function() {
+    eb.registerHandler("messages", processEvent);
+    eb.registerHandler("realtime", processNetwork('lte'));
+    eb.registerHandler("wifi", processNetwork('wifi'));
+  };
+}
 
 if (!Array.prototype.last) {
   Array.prototype.last = function() {
