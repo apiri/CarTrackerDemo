@@ -32,11 +32,29 @@ const markerHtmlStyles = `
   border-radius: 1rem 1rem 0;
   transform: rotate(45deg);`
 
+const wifiMarkerHtmlStyles = `
+  background-color: #0000FF;
+  width: .5rem;
+  height: .5rem;
+  display: block;
+  left: -.25rem;
+  top: -.25rem;
+  position: relative;
+  border-radius: .5rem .5rem 0;
+  transform: rotate(45deg);`
+
 const icon = L.divIcon({
   iconAnchor: [0, 24],
   labelAnchor: [-6, 0],
   popupAnchor: [0, -36],
   html: `<span style="${markerHtmlStyles}" />`
+})
+
+const iconWifi = L.divIcon({
+  iconAnchor: [0, 24],
+  labelAnchor: [-6, 0],
+  popupAnchor: [0, -36],
+  html: `<span style="${wifiMarkerHtmlStyles}" />`
 })
 
 var map = L.map('map');
@@ -225,19 +243,22 @@ function processEvent(event) {
     var msg = event;
     switch (msg.type) {
       case "position":
-
         // update the postiion of the car itself and therefore the overlay charts.
         var lat = parseFloat(msg.latitude_degrees);
         var lon = parseFloat(msg.longitude_degrees);
 
-        // Put a waypoint for this stop
-        L.marker([lat, lon], {icon: icon}).addTo(map)
-          .openPopup();
-        positions.push([lat, lon]);
-        var projectedPoint = projectLatLon(lat, lon);
-        positionsProjected.push(projectedPoint);
-        mutateLimitTo(positions, trailDepth);
-        mutateLimitTo(positionsProjected, trailDepth);
+        // Did we get a batch event?
+        if (msg.modem == 'wifi') {
+          L.marker([lat, lon], {icon: iconWifi}).addTo(map);
+        } else {
+          // Put a waypoint for this stop
+          L.marker([lat, lon], {icon: icon}).addTo(map);
+          positions.push([lat, lon]);
+          var projectedPoint = projectLatLon(lat, lon);
+          positionsProjected.push(projectedPoint);
+          mutateLimitTo(positions, trailDepth);
+          mutateLimitTo(positionsProjected, trailDepth);
+        }
         break;
       case "sensor":
         // a time series for the car, same as rates, but with a class.
