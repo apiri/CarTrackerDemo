@@ -69,14 +69,52 @@ var lineFunction = d3.svg.line()
 //   map.fitBounds(geo);
 // });
 
+function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+}
 
+function intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
+}
+
+function reverse(str) {
+  if(!str.trim() || 'string' !== typeof str) {
+    return;
+  }
+  let l=str.length, s='';
+  while(l > 0) {
+    l--;
+    s+= str[l];
+  }
+  return s;
+}
 
 var duration = 5000;
+var entity_data = {};
 var lteStops = [];
 
 function processEvent(event) {
   try {
     var msg = event;
+    var instance_id = msg.instance_id;
+    console.log("received event for instance " + instance_id)
+    // Have we been seen the first time
+    if (!(instance_id in entity_data)) {
+      entity_data[instance_id] = {};
+      curr_instance = entity_data[instance_id];
+      curr_instance['color'] = intToRGB(hashCode(instance_id));
+      curr_instance['lteStops'] = [];
+      curr_instance['wifi'] = [];
+    }
+
     switch (msg.type) {
       case "position":
         var lat = parseFloat(msg.latitude_degrees);
@@ -87,9 +125,11 @@ function processEvent(event) {
         var iconType = icon;
         if (msg.modem == 'wifi') {
           iconType = iconWifi;
+          iconType.options.html=iconType.options.html.replace('#FF0000','#'+reverse(curr_instance['color']));
         } else {
-          lteStops.push([lat, lon]);
-          map.fitBounds(lteStops, {padding: [25, 25]});
+          curr_instance['lteStops'].push([lat, lon]);
+          map.fitBounds(curr_instance['lteStops'], {padding: [25, 25]});
+          iconType.options.html=iconType.options.html.replace('#FF0000','#'+curr_instance['color']);
         }
         L.marker([lat, lon], {icon: iconType}).addTo(map);
 
