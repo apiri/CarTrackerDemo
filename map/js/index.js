@@ -48,8 +48,8 @@ var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   });
 map.addLayer(osm);
 map.setView([0, 0], 10);
-map.panTo([42.095425, -83.241576]);
-map.setZoom(14);
+map.panTo([39.8283, -98.5795]);
+map.setZoom(6);
 
 var svg = d3.select(map.getPanes().overlayPane).append("svg");
 
@@ -59,15 +59,6 @@ var lineFunction = d3.svg.line()
                        .x(function(d) { return d.x; })
                        .y(function(d) { return d.y; })
                        .interpolate("linear");
-
-// d3.json("/wifis.json", function(error, collection) {
-//   if (error) {
-//     throw error;
-//   }
-//   // fit the map
-//   var geo = L.geoJson(collection);
-//   map.fitBounds(geo);
-// });
 
 function hashCode(str) { // java String#hashCode
     var hash = 0;
@@ -128,7 +119,6 @@ function processEvent(event) {
           iconType.options.html=iconType.options.html.replace('#FF0000','#'+reverse(curr_instance['color']));
         } else {
           curr_instance['lteStops'].push([lat, lon]);
-          map.fitBounds(curr_instance['lteStops'], {padding: [25, 25]});
           iconType.options.html=iconType.options.html.replace('#FF0000','#'+curr_instance['color']);
         }
         L.marker([lat, lon], {icon: iconType}).addTo(map);
