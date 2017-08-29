@@ -96,7 +96,6 @@ function processEvent(event) {
   try {
     var msg = event;
     var instance_id = msg.instance_id;
-    console.log("received event for instance " + instance_id)
     // Have we been seen the first time
     if (!(instance_id in entity_data)) {
       entity_data[instance_id] = {};
